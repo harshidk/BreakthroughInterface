@@ -24,7 +24,7 @@ class Board{
         const static int boardWidth = 8;
         const static int boardLength = 8;
         enum Turn turn;
-        int board[boardWidth][boardLength];
+        int board[boardLength][boardWidth];
         std::vector<std::pair<int, int>> whitePieces;
         std::vector<std::pair<int, int>> blackPieces;
         std::vector<Move> legalMoves;

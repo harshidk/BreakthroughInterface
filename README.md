@@ -1,2 +1,2 @@
-# BreakthroughUI
-A UI for the game board game breakthrough
+# Breakthrough Interface
+An interface for the game board game breakthrough

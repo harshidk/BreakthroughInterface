@@ -8,11 +8,19 @@ class Board{
             FIRST,
             SECOND
         };
+
         enum Pieces{
             EMPTY,
             WHITE,
             BLACK
         };
+
+        enum Winner{
+            W,
+            B,
+            N
+        };
+
         const static int boardWidth = 8;
         const static int boardLength = 8;
         enum Turn turn;
@@ -33,10 +41,12 @@ class Board{
         void undoMove();
         bool canCapture();
         bool isGameOver();
+        Winner whoWon();
         bool isSquareOpponentPiece(int r, int c);
         bool isSquarePartnerPiece(int r, int c);
         void generateLegalMoves();
         void appendToMoveHistory(Move);
         void displayLegalMoves();
         void displayPieceList();
+        void displayMoveHistory();
 };

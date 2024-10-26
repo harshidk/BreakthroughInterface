@@ -118,6 +118,37 @@ void Board::generateLegalMoves(){
     }
 }
 
+bool Board::isGameOver(){
+    for(int i = 0; i < boardWidth; i++){
+        if(getSquare(0, i) == Pieces::BLACK) return true;
+    }
+    for(int i = 0; i < boardWidth; i++){
+        if(getSquare(boardLength - 1, i) == Pieces::WHITE) return true;
+    }
+    return false;
+}
+
+Board::Winner Board::whoWon(){
+    for(int i = 0; i < boardWidth; i++){
+        if(getSquare(0, i) == Pieces::BLACK) return Winner::B;
+    }
+    for(int i = 0; i < boardWidth; i++){
+        if(getSquare(boardLength - 1, i) == Pieces::WHITE) return Winner::W;
+    }
+    return Winner::N;
+}
+
+void Board::appendToMoveHistory(Move m){
+    moveHistory.push_back(m.toString());
+}
+
+void Board::displayMoveHistory(){
+    for(int i = 0; i < moveHistory.size(); i++){
+        if(i == moveHistory.size() - 1) std::cout << moveHistory[i];
+        std::cout << moveHistory[i] << ", ";
+    }
+}
+
 // display the board
 void Board::displayBoard(){
     for(int i = boardLength - 1; i >= 0; i--){
@@ -146,7 +177,6 @@ void Board::displayPieceList(){
 int main(){
     Board board;
     board.displayBoard();
-    board.generatePieceLists();
     board.generateLegalMoves();
     board.displayLegalMoves();
     // board.displayPieceList();

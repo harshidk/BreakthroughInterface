@@ -13,5 +13,6 @@ class Move{
         Move();
         void setMove(int r0, int c0, int r1, int c1);
         Move::m getMove();
+        friend bool operator== (const Move& m1, const Move& m2);
         std::string toString();
 };

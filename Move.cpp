@@ -20,6 +20,10 @@ Move::m Move::getMove(){
     return move;
 }
 
+bool operator==(const Move &m1, const Move &m2){
+    return ((m1.move.endSq == m2.move.endSq) && (m1.move.startSq == m2.move.startSq));
+}
+
 std::string Move::toString(){
     std::string res;
     res += char(move.startSq.second + 97);

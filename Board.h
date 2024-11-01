@@ -1,5 +1,6 @@
 #include <utility>
 #include <vector>
+#include <stdlib.h>
 #include "Move.cpp"
 
 class Board{
@@ -21,8 +22,8 @@ class Board{
             N
         };
 
-        const static int boardWidth = 8;
-        const static int boardLength = 8;
+        const static int boardWidth = 5;
+        const static int boardLength = 5;
         enum Turn turn;
         int board[boardLength][boardWidth];
         std::vector<std::pair<int, int>> whitePieces;
@@ -32,14 +33,15 @@ class Board{
 
     public:
         Board();
+        void init();
         void generatePieceLists();
         int getSquare(int r, int c);
         bool isSquarePiece(int r, int c);
         bool isSquareEmpty(int r, int c);
         void displayBoard();
-        void makeMove();
+        bool isMoveLegal(Move);
+        void makeMove(Move);
         void undoMove();
-        bool canCapture();
         bool isGameOver();
         Winner whoWon();
         bool isSquareOpponentPiece(int r, int c);
@@ -49,4 +51,5 @@ class Board{
         void displayLegalMoves();
         void displayPieceList();
         void displayMoveHistory();
+        std::vector<Move> getLegalMoves();
 };

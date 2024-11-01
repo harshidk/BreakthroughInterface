@@ -18,8 +18,13 @@ Board::Board(){
             board[i][j] = Pieces::BLACK;
         }
     }
-    generatePieceLists();
+    init();
+}
+
+void Board::init(){
     turn = Turn::FIRST;
+    generatePieceLists();
+    generateLegalMoves();
 }
 
 // gets the piece lists
@@ -78,8 +83,9 @@ bool Board::isSquarePiece(int r, int c){
 void Board::generateLegalMoves(){
     // clear every time
     legalMoves.clear();
+    if(isGameOver());
     // white to move
-    if(turn == Turn::FIRST){
+    else if(turn == Turn::FIRST){
         for(int i = 0; i < whitePieces.size(); i++){
             int squareR = whitePieces[i].first + 1;
             int pieceC = whitePieces[i].second;
@@ -88,17 +94,21 @@ void Board::generateLegalMoves(){
                 legalMoves.push_back(mov);
             }
             if(getSquare(squareR, pieceC + 1) == Pieces::EMPTY || getSquare(squareR, pieceC) == Pieces::BLACK){
-                Move mov(whitePieces[i].first, pieceC, squareR, pieceC + 1);
-                legalMoves.push_back(mov);
+                if(pieceC + 1 < boardWidth - 1){
+                    Move mov(whitePieces[i].first, pieceC, squareR, pieceC + 1);
+                    legalMoves.push_back(mov);
+                }
             }
             if(getSquare(squareR, pieceC - 1) == Pieces::EMPTY || getSquare(squareR, pieceC) == Pieces::BLACK){
-                Move mov(whitePieces[i].first, pieceC, squareR, pieceC - 1);
-                legalMoves.push_back(mov);
+                if(pieceC - 1 > 0){
+                    Move mov(whitePieces[i].first, pieceC, squareR, pieceC - 1);
+                    legalMoves.push_back(mov);
+                }
             }
         }
     }
     // black to move
-    if(turn == Turn::SECOND){
+    else if(turn == Turn::SECOND){
         for(int i = 0; i < blackPieces.size(); i++){
             int squareR = blackPieces[i].first - 1;
             int pieceC = blackPieces[i].second;
@@ -107,15 +117,43 @@ void Board::generateLegalMoves(){
                 legalMoves.push_back(mov);
             }
             if(getSquare(squareR, pieceC + 1) == Pieces::EMPTY || getSquare(squareR, pieceC) == Pieces::WHITE){
-                Move mov(blackPieces[i].first, pieceC, squareR, pieceC + 1);
-                legalMoves.push_back(mov);
+                if(pieceC + 1 < boardWidth - 1){
+                    Move mov(blackPieces[i].first, pieceC, squareR, pieceC + 1);
+                    legalMoves.push_back(mov);
+                }
             }
             if(getSquare(squareR, pieceC - 1) == Pieces::EMPTY || getSquare(squareR, pieceC) == Pieces::WHITE){
-                Move mov(blackPieces[i].first, pieceC, squareR, pieceC - 1);
-                legalMoves.push_back(mov);
+                if(pieceC - 1 > 0){
+                    Move mov(blackPieces[i].first, pieceC, squareR, pieceC - 1);
+                    legalMoves.push_back(mov);
+                }
             }
         }
     }
+}
+
+void Board::undoMove(){
+    
+}
+
+bool Board::isMoveLegal(Move mov){
+    for(int i = 0; i < legalMoves.size(); i++){
+        if(legalMoves[i] == mov) return true;
+    }
+    return false;
+}
+
+void Board::makeMove(Move mov){
+    if(!isMoveLegal(mov));
+
+    else{
+        board[mov.getMove().startSq.first][mov.getMove().startSq.second] = Pieces::EMPTY;
+        board[mov.getMove().endSq.first][mov.getMove().endSq.second] = turn == Turn::FIRST ? Pieces::WHITE : Pieces::BLACK;
+        appendToMoveHistory(mov);
+        turn = turn == Turn::FIRST ? Turn::SECOND : Turn::FIRST;
+    }
+    generatePieceLists();
+    generateLegalMoves();
 }
 
 bool Board::isGameOver(){
@@ -138,6 +176,10 @@ Board::Winner Board::whoWon(){
     return Winner::N;
 }
 
+std::vector<Move> Board::getLegalMoves(){
+    return legalMoves;
+}
+
 void Board::appendToMoveHistory(Move m){
     moveHistory.push_back(m.toString());
 }
@@ -145,7 +187,7 @@ void Board::appendToMoveHistory(Move m){
 void Board::displayMoveHistory(){
     for(int i = 0; i < moveHistory.size(); i++){
         if(i == moveHistory.size() - 1) std::cout << moveHistory[i];
-        std::cout << moveHistory[i] << ", ";
+        else std::cout << moveHistory[i] << ", ";
     }
 }
 
@@ -172,12 +214,25 @@ void Board::displayPieceList(){
     for(int i = 0; i < whitePieces.size(); i++){
         std::cout << whitePieces[i].first << "," << whitePieces[i].second << std::endl;
     }
+    std::cout << std::endl;
+    for(int i = 0; i < blackPieces.size(); i++){
+        std::cout << blackPieces[i].first << "," << blackPieces[i].second << std::endl;
+    }
 }
 
 int main(){
     Board board;
     board.displayBoard();
-    board.generateLegalMoves();
+    // board.generateLegalMoves();
     board.displayLegalMoves();
     // board.displayPieceList();
+    while(!board.isGameOver()){
+        std::srand(time(NULL));
+        board.makeMove(board.getLegalMoves().at(std::rand() % board.getLegalMoves().size()));
+    }
+    std::cout << std::endl << std::endl;
+    board.displayBoard();
+    std::cout << std::endl << std::endl;
+    board.displayMoveHistory();
+    std::cout << std::endl << board.whoWon();
 }
